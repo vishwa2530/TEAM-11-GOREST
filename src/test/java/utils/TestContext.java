@@ -10,8 +10,9 @@ public class TestContext {
 
     // Shared response object used by all step files and Assertions
     public static Response response;
-
+    public static String postId;
     // Excel data used for validation in Assertions
     public static String excelTitle;
     public static String excelBody;
+
 }

@@ -44,6 +44,9 @@ public class Assertions {
     public void responseBodyContainsFieldWithValue(String field, String expectedValue) {
         String actual = TestContext.response.jsonPath().getString(field);
         // Dynamic IDs: if both are large numbers, skip exact match
+        if ("dynamic".equalsIgnoreCase(expectedValue)) {
+    expectedValue = TestContext.postId;
+}
         if (expectedValue != null && expectedValue.matches("\\d{5,}") && actual != null && actual.matches("\\d{5,}")) {
             return;
         }
