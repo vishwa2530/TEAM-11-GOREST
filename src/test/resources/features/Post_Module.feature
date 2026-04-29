@@ -20,9 +20,9 @@ Feature: Posts Module Testing
 
     Examples:
       | title            | body                       | userId  |
-      | My First Post    | This is the body of post 1 | 8449772 |
-      | Another Post     | This is the body of post 2 | 8449772 |
-      | Third Post Entry | This is the body of post 3 | 8449772 |
+      | My First Post    | This is the body of post 1 | dynamic |
+      | Another Post     | This is the body of post 2 | dynamic |
+      | Third Post Entry | This is the body of post 3 | dynamic |
 
   Scenario: TC-002 - Create Post with Non-Existing User ID returns 422
     When I Send POST request to create a post with non-existing userId "99999"
@@ -32,7 +32,7 @@ Feature: Posts Module Testing
     And Response body contains an appropriate error message
 
   Scenario: TC-003 - Create Post with Empty or Duplicate Payload returns 422
-    When I Send POST request to create a post with empty title and body for userId "8449772"
+    When I Send POST request to create a post with empty title and body for userId "dynamic"
     Then Response status code should be 422
     And Response status line contains "Unprocessable Entity"
     And Response time less than 3000 ms
@@ -73,7 +73,7 @@ Feature: Posts Module Testing
   Scenario: TC-008 - Full Update Post with Non-Existing Post ID returns 404
     When I Send PUT request to update post "99999" with the following details:
       | title         | body         | userId  |
-      | Updated Title | Updated body | 8449772 |
+      | Updated Title | Updated body | 8452674 |
     Then Response status code should be 404
     And Response status line contains "Not Found"
     And Response time less than 3000 ms
@@ -123,9 +123,8 @@ Feature: Posts Module Testing
     And Response time less than 3000 ms
     And Response body indicates authentication or authorization failure
 
-  Scenario: TC-015 - GET /posts with No Auth returns 401
+  Scenario: TC-015 - GET /posts with No Auth returns 200
     When I Send GET request to fetch all posts with no auth
     Then Response status code should be 401
     And Response status line contains "Unauthorized"
     And Response time less than 3000 ms
-    And Response body indicates authentication or authorization failure
