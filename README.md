@@ -28,14 +28,35 @@ D:/sprint/
 │   └── testData/           # Excel data files
 └── pom.xml                 # Project dependencies
 ```
+## 🧪 Testing Coverage
 
-## 🧪 Testing Coverage: Comments Module
-The current implementation covers 15 critical scenarios for the **Comments Module**:
-- ✅ **POST:** Create comment with valid/invalid/empty data.
-- ✅ **GET:** Fetch single comment by ID, fetch all comments.
-- ✅ **PUT:** Update comment details via Excel and DataTables.
-- ✅ **DELETE:** Delete existing comments and verify deletion.
-- ✅ **AUTH:** Negative testing for invalid tokens and unauthorized access.
+### 👤 Users Module
+- POST: Create user with valid/invalid data
+- GET: Fetch user by ID and list users
+- PUT: Update user details
+- DELETE: Delete user and verify deletion
+- AUTH: Validate unauthorized access
+
+### 📝 Posts Module
+- POST: Create post with dynamic user ID
+- GET: Fetch post by ID and list posts
+- PUT: Update post details
+- DELETE: Delete post
+- NEGATIVE: Invalid data scenarios
+
+### 💬 Comments Module
+- POST: Create comment with valid/invalid/empty data
+- GET: Fetch single comment and all comments
+- PUT: Update comment via Excel/DataTables
+- DELETE: Delete comment and validate response
+- AUTH: Invalid token validation
+
+### ✅ Todos Module
+- POST: Create todo
+- GET: Fetch todos
+- PUT: Update todo status/details
+- DELETE: Delete todo
+- VALIDATION: Status and response checks
 
 ## 🚀 How to Run Tests
 
@@ -44,19 +65,45 @@ The current implementation covers 15 critical scenarios for the **Comments Modul
 mvn test
 ```
 
-### Run specific module (Comments)
+### Run Users module
+```bash
+mvn test -Dcucumber.options="src/test/resources/features/User_Module.feature"
+```
+
+### Run Posts module
+```bash
+mvn test -Dcucumber.options="src/test/resources/features/Post_Module.feature"
+```
+
+### Run Comments module
 ```bash
 mvn test -Dcucumber.options="src/test/resources/features/Comments_Module.feature"
 ```
 
-### Generate Report
-After execution, the HTML report can be found at:
-`target/cucumber-reports/index.html`
-
-## 👨‍💻 Author
-**Jishwa**
-*Senior Automation Engineer*
+### Run Todos module
+```bash
+mvn test -Dcucumber.options="src/test/resources/features/Todo_Module.feature"
+```
 
 ---
-> [!NOTE]
-> This framework is designed for standardized API testing across all GoRest modules (Users, Posts, Todos, Comments).
+
+## 📊 Report
+
+After execution, open:
+
+```
+target/cucumber-reports/report.html
+```
+
+---
+
+## 👨‍💻 Authors
+
+- Rajmohan  
+- Kamesh  
+- Jishwa Rohith  
+- Vishwa  
+
+---
+
+> NOTE: This framework supports API testing for Users, Posts, Comments, and Todos modules.
