@@ -15,4 +15,5 @@ public class TestContext {
     public static String excelTitle;
     public static String excelBody;
 
+    public static int commentId;
 }
