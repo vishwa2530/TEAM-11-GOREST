@@ -14,5 +14,5 @@ public class TestContext {
     // Excel data used for validation in Assertions
     public static String excelTitle;
     public static String excelBody;
-
+    public static String userId;
 }
