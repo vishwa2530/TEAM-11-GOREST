@@ -16,4 +16,5 @@ public class TestContext {
     public static String excelBody;
 
     public static int commentId;
+    public static String userId;
 }

@@ -1,5 +1,6 @@
 package stepDefinitions;
 
+import java.util.List;
 import java.util.Map;
 
 import endpoints.GoRestEndpoints;
@@ -12,37 +13,68 @@ import utils.TestContext;
 
 public class PostStep {
 
+    // ───────────── USER ID RESOLVER ─────────────
+    private String resolveUserId(String userId) {
 
-    private String getPostId(String postId) {
-        if ("dynamic".equalsIgnoreCase(postId)) {
-            if (TestContext.postId == null) {
-                throw new RuntimeException("postId is NULL. Ensure POST scenario runs before this.");
+        if ("dynamic".equalsIgnoreCase(userId)) {
+
+            if (TestContext.userId == null) {
+
+                TestContext.response = RestAssured.given()
+                        .when()
+                        .get(GoRestEndpoints.GET_ALL_USERS);
+
+                List<Map<String, Object>> users =
+                        TestContext.response.jsonPath().getList("$");
+
+                if (users != null && !users.isEmpty()) {
+                    TestContext.userId = String.valueOf(users.get(0).get("id"));
+                } else {
+                    throw new RuntimeException("No users found");
+                }
             }
+
+            return TestContext.userId;
+        }
+
+        return userId; // for negative cases
+    }
+
+    // ───────────── POST ID RESOLVER ─────────────
+    private String getPostId(String postId) {
+
+        if ("dynamic".equalsIgnoreCase(postId)) {
+
+            if (TestContext.postId == null) {
+                throw new RuntimeException("postId is NULL. Run POST first.");
+            }
+
             return TestContext.postId;
         }
+
         return postId;
     }
 
     @Given("the GoRest Posts API is accessible with a valid bearer token")
-    public void setup() {
-        // handled in hooks
-    }
+    public void setup() {}
 
     // ───────────── POST ─────────────
 
     @When("I Send POST request to create a post {string} {string} {string}")
     public void createPost(String title, String body, String userIdStr) {
 
-        int userId = Integer.parseInt(userIdStr);
+        String resolvedUserId = resolveUserId(userIdStr);
 
         TestContext.response = RestAssured.given()
-                .pathParam("userId", userId)  
-                .body(DataUtility.buildPostJson(title, body, userId))
+                .pathParam("userId", resolvedUserId)
+                .body(DataUtility.buildPostJson(title, body, Integer.parseInt(resolvedUserId)))
                 .when()
                 .post(GoRestEndpoints.CREATE_POST);
 
-        
-        TestContext.postId = TestContext.response.jsonPath().getString("id");
+        // store postId
+        if (TestContext.response.getStatusCode() == 201) {
+            TestContext.postId = TestContext.response.jsonPath().getString("id");
+        }
     }
 
     @When("I Send POST request to create a post with non-existing userId {string}")
@@ -51,7 +83,7 @@ public class PostStep {
         int userId = Integer.parseInt(userIdStr);
 
         TestContext.response = RestAssured.given()
-                .pathParam("userId", userId)  
+                .pathParam("userId", userId)
                 .body(DataUtility.buildPostJson("Test Post", "Sample body", userId))
                 .when()
                 .post(GoRestEndpoints.CREATE_POST);
@@ -60,11 +92,11 @@ public class PostStep {
     @When("I Send POST request to create a post with empty title and body for userId {string}")
     public void createEmptyPost(String userIdStr) {
 
-        int userId = Integer.parseInt(userIdStr);
+        String resolvedUserId = resolveUserId(userIdStr);
 
         TestContext.response = RestAssured.given()
-                .pathParam("userId", userId)   
-                .body(DataUtility.buildPostJson("", "", userId))
+                .pathParam("userId", resolvedUserId)
+                .body(DataUtility.buildPostJson("", "", Integer.parseInt(resolvedUserId)))
                 .when()
                 .post(GoRestEndpoints.CREATE_POST);
     }
@@ -160,7 +192,7 @@ public class PostStep {
 
         TestContext.response = RestAssured.given()
                 .auth().oauth2("invalid")
-                .pathParam("userId", "1")  
+                .pathParam("userId", "1")
                 .body(DataUtility.buildPostJson("Test", "Body", 1))
                 .when()
                 .post(GoRestEndpoints.CREATE_POST);
