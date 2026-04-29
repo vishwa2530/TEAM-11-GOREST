@@ -32,4 +32,17 @@ public class DataUtility {
     public static String buildCommentJson(String name, String email, String body, int postId) {
         return String.format("{\"post_id\":%d,\"name\":\"%s\",\"email\":\"%s\",\"body\":\"%s\"}", postId, name, email, body);
     }
+
+    public static String buildCommentJson(Map<String, String> row) {
+        String postIdStr = row.containsKey("postId") ? row.get("postId") : row.get("post_id");
+        int postId = 0;
+        try {
+            postId = Integer.parseInt(postIdStr);
+        } catch (Exception e) {}
+        return buildCommentJson(
+                row.get("name"),
+                row.get("email"),
+                row.get("body"),
+                postId);
+    }
 }
